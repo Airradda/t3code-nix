@@ -44,7 +44,10 @@ let
     in
     appimageTools.wrapType2 {
       inherit pname version src;
-      nativeBuildInputs = [ makeWrapper codex ];
+      nativeBuildInputs = [
+        makeWrapper
+        codex
+      ];
 
       extraInstallCommands = ''
         mkdir -p "$out/share"
@@ -92,11 +95,7 @@ let
       "T3-Code-${version}-arm64.zip"
     else
       "T3-Code-${version}-x64.zip";
-  darwinHash =
-    if stdenv.hostPlatform.isAarch64 then
-      darwinArm64Hash
-    else
-      darwinX64Hash;
+  darwinHash = if stdenv.hostPlatform.isAarch64 then darwinArm64Hash else darwinX64Hash;
 
   darwinPackage = stdenvNoCC.mkDerivation {
     inherit pname version;

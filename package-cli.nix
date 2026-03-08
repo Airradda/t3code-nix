@@ -1,10 +1,11 @@
-{ lib
-, buildNpmPackage
-, fetchurl
-, importNpmLock
-, makeWrapper
-, nodejs_22
-, codex ? true
+{
+  lib,
+  buildNpmPackage,
+  fetchurl,
+  importNpmLock,
+  makeWrapper,
+  nodejs_22,
+  codex ? true,
 }:
 
 let
@@ -12,31 +13,25 @@ let
   packageLockJson = lib.importJSON ./npm/package-lock.json;
   normalizeDependencyRefs =
     deps:
-    lib.mapAttrs
-      (
-        name: value:
-        if packageLockJson.packages ? "node_modules/${name}" then
-          packageLockJson.packages."node_modules/${name}".version
-        else
-          value
-      )
-      deps;
-  normalizedPackageLock =
-    packageLockJson
-    // {
-      packages = lib.mapAttrs
-        (
-          _: module:
-            module
-            // lib.optionalAttrs (module ? dependencies) {
-              dependencies = normalizeDependencyRefs module.dependencies;
-            }
-            // lib.optionalAttrs (module ? optionalDependencies) {
-              optionalDependencies = normalizeDependencyRefs module.optionalDependencies;
-            }
-        )
-        packageLockJson.packages;
-    };
+    lib.mapAttrs (
+      name: value:
+      if packageLockJson.packages ? "node_modules/${name}" then
+        packageLockJson.packages."node_modules/${name}".version
+      else
+        value
+    ) deps;
+  normalizedPackageLock = packageLockJson // {
+    packages = lib.mapAttrs (
+      _: module:
+      module
+      // lib.optionalAttrs (module ? dependencies) {
+        dependencies = normalizeDependencyRefs module.dependencies;
+      }
+      // lib.optionalAttrs (module ? optionalDependencies) {
+        optionalDependencies = normalizeDependencyRefs module.optionalDependencies;
+      }
+    ) packageLockJson.packages;
+  };
 in
 buildNpmPackage rec {
   pname = "t3-cli";
@@ -70,7 +65,10 @@ buildNpmPackage rec {
   };
 
   npmConfigHook = importNpmLock.npmConfigHook;
-  nativeBuildInputs = [ makeWrapper codex ];
+  nativeBuildInputs = [
+    makeWrapper
+    codex
+  ];
   dontNpmBuild = true;
 
   postPatch = ''

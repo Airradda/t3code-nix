@@ -4,6 +4,7 @@
 , importNpmLock
 , makeWrapper
 , nodejs_22
+, codex ? true
 }:
 
 let
@@ -69,7 +70,7 @@ buildNpmPackage rec {
   };
 
   npmConfigHook = importNpmLock.npmConfigHook;
-  nativeBuildInputs = [ makeWrapper ];
+  nativeBuildInputs = [ makeWrapper codex ];
   dontNpmBuild = true;
 
   postPatch = ''

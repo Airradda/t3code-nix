@@ -5,7 +5,8 @@
   appimageTools,
   fetchurl,
   makeWrapper,
-  unzip
+  unzip,
+  codex ? true,
 }:
 
 let
@@ -43,7 +44,7 @@ let
     in
     appimageTools.wrapType2 {
       inherit pname version src;
-      nativeBuildInputs = [ makeWrapper ];
+      nativeBuildInputs = [ makeWrapper codex ];
 
       extraInstallCommands = ''
         mkdir -p "$out/share"
@@ -108,6 +109,7 @@ let
     nativeBuildInputs = [
       makeWrapper
       unzip
+      codex
     ];
 
     sourceRoot = ".";

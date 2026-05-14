@@ -37,7 +37,8 @@
     "root": {
       "inputs": {
         "flake-utils": "flake-utils",
-        "nixpkgs": "nixpkgs"
+        "nixpkgs": "nixpkgs",
+        "t3code-src": "t3code-src"
       }
     },
     "systems": {
@@ -53,6 +54,19 @@
         "owner": "nix-systems",
         "repo": "default",
         "type": "github"
+      }
+    },
+    "t3code-src": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1778766891,
+        "narHash": "sha256-AS+xiOA9rJdOjdNFSOOZxpYjtw1ujHBzf/OsXI3U81c=",
+        "path": "/home/airradda/Git/t3code",
+        "type": "path"
+      },
+      "original": {
+        "path": "/home/airradda/Git/t3code",
+        "type": "path"
       }
     }
   },

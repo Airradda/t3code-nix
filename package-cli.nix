@@ -1,92 +1,59 @@
-{ lib
-, buildNpmPackage
-, fetchurl
-, importNpmLock
-, makeWrapper
-, nodejs_22
-, codexSupport ? true, codex
+{
+  lib,
+  stdenv,
+  bun,
+  makeWrapper,
+  nodejs_24,
+  t3codeSrc,
+  codexSupport ? true,
+  codex,
 }:
 
 let
-  packageJson = lib.importJSON ./npm/package.json;
-  packageLockJson = lib.importJSON ./npm/package-lock.json;
-  normalizeDependencyRefs =
-    deps:
-    lib.mapAttrs
-      (
-        name: value:
-        if packageLockJson.packages ? "node_modules/${name}" then
-          packageLockJson.packages."node_modules/${name}".version
-        else
-          value
-      )
-      deps;
-  normalizedPackageLock =
-    packageLockJson
-    // {
-      packages = lib.mapAttrs
-        (
-          _: module:
-            module
-            // lib.optionalAttrs (module ? dependencies) {
-              dependencies = normalizeDependencyRefs module.dependencies;
-            }
-            // lib.optionalAttrs (module ? optionalDependencies) {
-              optionalDependencies = normalizeDependencyRefs module.optionalDependencies;
-            }
-        )
-        packageLockJson.packages;
-    };
+  packageJson = lib.importJSON "${t3codeSrc}/apps/server/package.json";
 in
-buildNpmPackage rec {
+stdenv.mkDerivation {
   pname = "t3-cli";
-  version = "0.0.13";
-  nodejs = nodejs_22;
+  inherit (packageJson) version;
 
-  src = fetchurl {
-    url = "https://registry.npmjs.org/t3/-/t3-${version}.tgz";
-    hash = "sha512-gEw97MXJF5eDaq0reo/2rDXrZaAd2BoEcofRZ+nioY9kAfuIRkAGQebG5n39wSdHrOK2vYDWjkNV1+d0fFeh8A==";
-  };
+  src = t3codeSrc;
 
-  sourceRoot = "package";
+  nativeBuildInputs = [
+    bun
+    makeWrapper
+    nodejs_24
+  ];
 
-  npmDeps = importNpmLock {
-    package = packageJson;
-    packageLock = normalizedPackageLock;
-    fetcherOpts = {
-      "node_modules/@effect/platform-node" = {
-        name = "platform-node.tgz";
-      };
-      "node_modules/@effect/platform-node-shared" = {
-        name = "platform-node-shared.tgz";
-      };
-      "node_modules/@effect/sql-sqlite-bun" = {
-        name = "sql-sqlite-bun.tgz";
-      };
-      "node_modules/effect" = {
-        name = "effect.tgz";
-      };
-    };
-  };
+  dontConfigure = true;
+  dontFixup = true;
 
-  npmConfigHook = importNpmLock.npmConfigHook;
-  nativeBuildInputs = [ makeWrapper ];
-  dontNpmBuild = true;
+  buildPhase = ''
+    runHook preBuild
 
-  postPatch = ''
-    cp ${./npm/package.json} package.json
-    cp ${./npm/package-lock.json} package-lock.json
-    sed -i "s/var version = \\\".*\\\";/var version = \\\"${version}\\\";/" dist/index.mjs dist/index.cjs
+    export HOME="$TMPDIR/home"
+    export XDG_CACHE_HOME="$TMPDIR/.cache"
+    export BUN_INSTALL_CACHE_DIR="$TMPDIR/.bun-install"
+    mkdir -p "$HOME" "$XDG_CACHE_HOME" "$BUN_INSTALL_CACHE_DIR"
+
+    export PATH="$PWD/node_modules/.bin:$PATH"
+
+    patchShebangs .
+
+    turbo_entrypoint="$(readlink -f node_modules/.bin/turbo)"
+    ${nodejs_24}/bin/node "$turbo_entrypoint" run build --filter=@t3tools/web --filter=t3
+
+    runHook postBuild
   '';
 
   installPhase = ''
     runHook preInstall
 
-    mkdir -p $out/lib/node_modules/t3 $out/bin
-    cp -r . $out/lib/node_modules/t3
+    mkdir -p "$out/apps/server" "$out/bin"
+    cp -r apps/server/dist "$out/apps/server/dist"
+    cp apps/server/package.json "$out/apps/server/package.json"
 
-    makeWrapper ${nodejs_22}/bin/node $out/bin/t3 \
-      --add-flags "$out/lib/node_modules/t3/dist/index.mjs" \
+    makeWrapper ${nodejs_24}/bin/node "$out/bin/t3" \
+      --add-flags "$out/apps/server/dist/bin.mjs" \
       ${lib.optionalString codexSupport ''
         --prefix PATH : "${lib.makeBinPath [ codex ]}"
       ''}
@@ -95,7 +62,7 @@ buildNpmPackage rec {
   '';
 
   meta = with lib; {
-    description = "T3 Code CLI packaged from the upstream npm artifact";
+    description = "T3 Code CLI built from the local monorepo source";
     homepage = "https://github.com/pingdotgg/t3code";
     license = licenses.mit;
     mainProgram = "t3";

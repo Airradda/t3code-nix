@@ -4,9 +4,18 @@
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     flake-utils.url = "github:numtide/flake-utils";
+    t3code-src = {
+      url = "path:/home/airradda/Git/t3code";
+      flake = false;
+    };
   };
 
-  outputs = { self, nixpkgs, flake-utils }:
+  outputs = {
+    self,
+    nixpkgs,
+    flake-utils,
+    t3code-src,
+  }:
     let
       supportedSystems = [
         "x86_64-linux"
@@ -14,9 +23,13 @@
         "aarch64-darwin"
       ];
       overlay = final: prev: {
-        t3code = final.callPackage ./package.nix { };
+        t3code = final.callPackage ./package.nix {
+          t3codeSrc = t3code-src;
+        };
         t3code-desktop = final.t3code;
-        t3code-cli = final.callPackage ./package-cli.nix { };
+        t3code-cli = final.callPackage ./package-cli.nix {
+          t3codeSrc = t3code-src;
+        };
         t3 = final.t3code-cli;
       };
       mkApp = drv: binary: {

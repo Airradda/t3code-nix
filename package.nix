@@ -5,8 +5,14 @@
 , fetchurl
 , makeWrapper
 , unzip
-, codexSupport ? true
-, codex
+, codexSupport ? true, codex
+, opencodeSupport ? false, opencode
+, cursorSupport ? false, cursor-cli
+, claudeSupport ? false, claude-code
+, githubSupport ? false, gh
+, gitlabSupport ? true, glab
+, azureSupport ? false, azure-cli
+, bitbucketSupport ? false, bitbucket-cli
 }:
 
 let
@@ -127,9 +133,18 @@ let
       makeWrapper \
         "$out/Applications/${darwinAppName}/Contents/MacOS/${darwinExecutable}" \
         "$out/bin/${pname}" \
-        ${lib.optionalString codexSupport ''
-          --prefix PATH : "${lib.makeBinPath [ codex ]}"
-        ''}
+        ${lib.concatStringsSep " \\
+        " (lib.filter (s: s != "") [
+          (lib.optionalString codexSupport ''--prefix PATH : "${lib.makeBinPath [ codex ]}"'')
+          (lib.optionalString opencodeSupport ''--prefix PATH : "${lib.makeBinPath [ opencode ]}"'')
+          (lib.optionalString cursorSupport ''--prefix PATH : "${lib.makeBinPath [ cursor-cli ]}"'')
+          (lib.optionalString claudeSupport ''--prefix PATH : "${lib.makeBinPath [ claude-code ]}"'')
+          (lib.optionalString githubSupport ''--prefix PATH : "${lib.makeBinPath [ gh ]}"'')
+          (lib.optionalString gitlabSupport ''--prefix PATH : "${lib.makeBinPath [ glab ]}"'')
+          (lib.optionalString azureSupport ''--prefix PATH : "${lib.makeBinPath [ azure-cli ]}"'')
+          (lib.optionalString bitbucketSupport ''--prefix PATH : "${lib.makeBinPath [ bitbucket-cli ]}"'')
+        ])}
+
 
       runHook postInstall
     '';

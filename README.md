@@ -81,7 +81,7 @@ CLI package:
 
 The GitHub Actions update workflow checks upstream releases every six hours.
 
-An update is valid only when both of these exist for the same version:
+An update is valid only when all of these exist for the same version:
 
 - a GitHub release in `pingdotgg/t3code` with an `x86_64` AppImage asset
 - the matching GitHub release also includes `x64.zip` and `arm64.zip` macOS desktop assets
@@ -89,8 +89,7 @@ An update is valid only when both of these exist for the same version:
 
 When a new version is found, the updater:
 
-- refreshes `package.nix` for the desktop AppImage
-- refreshes `package.nix` for the Linux and macOS desktop hashes
+- refreshes `package.nix` for the Linux AppImage and macOS desktop archives
 - refreshes `package-cli.nix` for the CLI package
 - regenerates `npm/package.json`
 - regenerates `npm/package-lock.json`
@@ -136,17 +135,17 @@ The updater falls back to `GITHUB_TOKEN` if the secret is absent, but in that mo
 Update to the latest upstream release:
 
 ```bash
-./scripts/update.sh
+nix develop -c ./scripts/update.sh
 ```
 
 Check whether an update is available:
 
 ```bash
-./scripts/update.sh --check
+nix develop -c ./scripts/update.sh --check
 ```
 
 Update to a specific version:
 
 ```bash
-./scripts/update.sh --version 0.0.4
+nix develop -c ./scripts/update.sh --version 0.0.4
 ```

@@ -1,20 +1,20 @@
-{
-  lib,
-  stdenv,
-  stdenvNoCC,
-  appimageTools,
-  fetchurl,
-  makeWrapper,
-  unzip,
-  codexSupport ? true, codex
+{ lib
+, stdenv
+, stdenvNoCC
+, appimageTools
+, fetchurl
+, makeWrapper
+, unzip
+, codexSupport ? true
+, codex
 }:
 
 let
   pname = "t3code";
-  version = "0.0.23";
-  linuxHash = "sha256-qMPSxQuiCwLT0As1foSDqaKoNMoLrjbKbDSwQW56T7g=";
-  darwinX64Hash = "sha256-sxIzxzmNYGBtu5utziHp3Jd6tCuzkwPD+d64P91LAyg=";
-  darwinArm64Hash = "sha256-ELXpl9djSt+C8tFFSemG3W1pcvgcctxawBLZARQDRMU=";
+  version = "0.0.24";
+  linuxHash = "sha256-t8KYAtaQKWmCVOOwvHByosYoqb0Ji35Qe4m+8Gtp/+k=";
+  darwinX64Hash = "sha256-sUn07UxtBbly3C6RsDPi2nWSFRtSe5cq5kXH4AdEFqU=";
+  darwinArm64Hash = "sha256-+tJJuna5oCeFUjr+sVBhK/ISw6Jg4uQAqihrW/DHrfM=";
 
   commonMeta = {
     description = "T3 Code desktop app packaged from upstream release artifacts";

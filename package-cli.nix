@@ -4,7 +4,8 @@
 , importNpmLock
 , makeWrapper
 , nodejs_22
-, codexSupport ? true, codex
+, codexSupport ? true
+, codex
 }:
 
 let
@@ -25,49 +26,22 @@ let
       "${lib.removeSuffix ".mjs" binPath}.cjs"
     else
       null;
-  normalizeDependencyRefs =
-    deps:
-    lib.mapAttrs
-      (
-        name: value:
-        if packageLockJson.packages ? "node_modules/${name}" then
-          packageLockJson.packages."node_modules/${name}".version
-        else
-          value
-      )
-      deps;
-  normalizedPackageLock =
-    packageLockJson
-    // {
-      packages = lib.mapAttrs
-        (
-          _: module:
-            module
-            // lib.optionalAttrs (module ? dependencies) {
-              dependencies = normalizeDependencyRefs module.dependencies;
-            }
-            // lib.optionalAttrs (module ? optionalDependencies) {
-              optionalDependencies = normalizeDependencyRefs module.optionalDependencies;
-            }
-        )
-        packageLockJson.packages;
-    };
 in
 buildNpmPackage rec {
   pname = "t3-cli";
-  version = "0.0.23";
+  version = "0.0.24";
   nodejs = nodejs_22;
 
   src = fetchurl {
     url = "https://registry.npmjs.org/t3/-/t3-${version}.tgz";
-    hash = "sha512-T+xcsliQSrstM+Fc/5flvh5acZ4jLfjrmlfo5G6a5dJ0xhRTFM/OkNq9yHAQgGM8BaXzaRC8fzOTXRy5qzRrQw==";
+    hash = "sha512-QnjrGWX7ugy6usNkysOCaEYbT2aTL+C+Weo8pHdkbl0H0CEIf0LqRcALQBHwE0zpguCr/9S95zm0aMr4gzU32A==";
   };
 
   sourceRoot = "package";
 
   npmDeps = importNpmLock {
     package = packageJsonForNpm;
-    packageLock = normalizedPackageLock;
+    packageLock = packageLockJson;
     fetcherOpts = {
       "node_modules/@effect/platform-node" = {
         name = "platform-node.tgz";

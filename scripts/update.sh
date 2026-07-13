@@ -75,7 +75,7 @@ github_digest_to_sri() {
   algo="${digest%%:*}"
   hex="${digest#*:}"
   [ "$algo" = "sha256" ] || fail "unsupported digest algorithm: ${algo}"
-  nix hash convert --hash-algo sha256 --to sri "$hex"
+  nix hash to-sri --type sha256 "$hex"
 }
 
 npm_metadata() {

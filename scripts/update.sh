@@ -136,6 +136,12 @@ write_upstream_cli_package_files() {
   log "generating package-lock.json for ${version}"
   (
     cd "$tmpdir/package"
+    node -e '
+      const fs = require("fs");
+      const pkg = JSON.parse(fs.readFileSync("package.json", "utf8"));
+      delete pkg.overrides;
+      fs.writeFileSync("package.json", JSON.stringify(pkg, null, 2) + "\n");
+    '
     npm install --package-lock-only --ignore-scripts >/dev/null
   )
   cp "$tmpdir/package/package-lock.json" npm/package-lock.json

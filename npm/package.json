@@ -9,7 +9,7 @@
     "t3": "./dist/bin.mjs"
   },
   "type": "module",
-  "version": "0.0.28",
+  "version": "0.0.29-nightly.20260721.864",
   "engines": {
     "node": "^22.16 || ^23.11 || >=24.10"
   },
@@ -29,19 +29,19 @@
     "node-pty": "^1.1.0"
   },
   "overrides": {
-    "@clerk/backend": "3.8.3-snapshot.v20260622234151",
-    "@clerk/clerk-js": "6.21.0-snapshot.v20260622234151",
-    "@clerk/electron": "0.0.2-snapshot.v20260622234151",
-    "@clerk/electron-passkeys": "0.0.2-snapshot.v20260622234151",
-    "@clerk/expo": "3.5.3-snapshot.v20260622234151",
-    "@clerk/react": "6.11.0-snapshot.v20260622234151",
-    "@clerk/shared": "4.21.0-snapshot.v20260622234151",
+    "@clerk/backend": "3.11.2",
+    "@clerk/clerk-js": "6.25.1",
     "@clerk/clerk-js>@base-org/account": "-",
     "@clerk/clerk-js>@coinbase/wallet-sdk": "-",
     "@clerk/clerk-js>@solana/wallet-adapter-base": "-",
     "@clerk/clerk-js>@solana/wallet-adapter-react": "-",
     "@clerk/clerk-js>@solana/wallet-standard": "-",
     "@clerk/clerk-js>@wallet-standard/core": "-",
+    "@clerk/electron": "0.0.11",
+    "@clerk/electron-passkeys": "0.0.3",
+    "@clerk/expo": "3.7.2",
+    "@clerk/react": "6.12.1",
+    "@clerk/shared": "4.25.1",
     "@effect/atom-react": "4.0.0-beta.78",
     "@effect/platform-bun": "4.0.0-beta.78",
     "@effect/platform-node": "4.0.0-beta.78",
@@ -50,11 +50,14 @@
     "@effect/sql-sqlite-bun": "4.0.0-beta.78",
     "@effect/vitest": "4.0.0-beta.78",
     "@effect/vitest>vitest": "-",
-    "@expo/metro-config": "56.0.13",
+    "@expo/metro-config": "56.0.14",
     "@pierre/diffs>@shikijs/transformers": "^4.2.0",
     "@types/node": "24.12.4",
     "effect": "4.0.0-beta.78",
-    "vite": "npm:@voidzero-dev/vite-plus-core@0.2.1",
+    "expo-modules-jsi": "56.0.10",
+    "expo-sharing>@expo/config-plugins": "56.0.9",
+    "expo-sharing>@expo/config-types": "56.0.6",
+    "vite": "npm:@voidzero-dev/vite-plus-core@0.2.2",
     "yaml": "^2.9.0"
   }
 }

@@ -4,22 +4,14 @@
 , importNpmLock
 , makeWrapper
 , nodejs_22
-, codexSupport ? true
-, codex
-, opencodeSupport ? false
-, opencode
-, cursorSupport ? false
-, cursor-cli
-, claudeSupport ? false
-, claude-code
-, githubSupport ? false
-, gh
-, gitlabSupport ? true
-, glab
-, azureSupport ? false
-, azure-cli
-, bitbucketSupport ? false
-, bitbucket-cli
+, codexSupport ? true, codex
+, opencodeSupport ? false, opencode
+, cursorSupport ? false, cursor-cli
+, claudeSupport ? false, claude-code
+, githubSupport ? false, gh
+, gitlabSupport ? true, glab
+, azureSupport ? false, azure-cli
+, bitbucketSupport ? false, bitbucket-cli
 }:
 
 let
@@ -43,12 +35,12 @@ let
 in
 buildNpmPackage rec {
   pname = "t3-cli";
-  version = "0.0.29-nightly.20260727.919";
+  version = "0.0.29";
   nodejs = nodejs_22;
 
   src = fetchurl {
     url = "https://registry.npmjs.org/t3/-/t3-${version}.tgz";
-    hash = "sha512-2ENEBF40DFxkC3cdqRPEPO3vSfk1QXenHlQow9Gbau6hkza7beyHg3y1iXPqEPDbe70P5Vki8D/wEZeco598Rg==";
+    hash = "sha512-ndi94fqCFXR3O5DzXSJrsMdpiCQYV6eo98OX6/VYt7GO3No5kbUWVlCxZV8JqnCVnXRoEILug8LiPzreRdpHkQ==";
   };
 
   sourceRoot = "package";

@@ -5,30 +5,22 @@
 , fetchurl
 , makeWrapper
 , unzip
-, codexSupport ? true
-, codex
-, opencodeSupport ? false
-, opencode
-, cursorSupport ? false
-, cursor-cli
-, claudeSupport ? false
-, claude-code
-, githubSupport ? false
-, gh
-, gitlabSupport ? true
-, glab
-, azureSupport ? false
-, azure-cli
-, bitbucketSupport ? false
-, bitbucket-cli
+, codexSupport ? true, codex
+, opencodeSupport ? false, opencode
+, cursorSupport ? false, cursor-cli
+, claudeSupport ? false, claude-code
+, githubSupport ? false, gh
+, gitlabSupport ? true, glab
+, azureSupport ? false, azure-cli
+, bitbucketSupport ? false, bitbucket-cli
 }:
 
 let
   pname = "t3code";
-  version = "0.0.29-nightly.20260727.919";
-  linuxHash = "sha256-TXvWtG9qXHq6rhp/s7G8xUAJpgZuQzSqXMYmVhGGbMU=";
-  darwinX64Hash = "sha256-vRtSLzFyW/2f6S1wvnFDvdGKKvIHG2s5f1gRiOYUoXI=";
-  darwinArm64Hash = "sha256-lCvnxJPytUYtoUEfdD6QLlzoSDyRpZF9T/d616WHG0o=";
+  version = "0.0.29";
+  linuxHash = "sha256-OAMKpPD+ATFCaXh4dELKkDtAsvko1SoR0WiTudnKjPQ=";
+  darwinX64Hash = "sha256-f90A2h/MLwaQK12d6dDyig+zlRezBAzFhNvrWcusmbQ=";
+  darwinArm64Hash = "sha256-HG8GydtcCKEkLBIwj/7D9GlYEtokNY7x+Ai/mCk+9rI=";
 
   commonMeta = {
     description = "T3 Code desktop app packaged from upstream release artifacts";

@@ -69,7 +69,7 @@ Use as a flake input:
 Desktop package:
 
 - `x86_64-linux`: fetches the upstream AppImage from GitHub releases and wraps it with `appimageTools.wrapType2`
-- `x86_64-darwin` and `aarch64-darwin`: fetches the matching upstream zip archive and installs the `.app` bundle into the Nix store with a `t3code` launcher
+- `aarch64-darwin`: fetches the matching upstream zip archive and installs the `.app` bundle into the Nix store with a `t3code` launcher
 
 CLI package:
 
@@ -83,8 +83,7 @@ The GitHub Actions update workflow checks upstream releases every six hours.
 
 An update is valid only when all of these exist for the same version:
 
-- a GitHub release in `pingdotgg/t3code` with an `x86_64` AppImage asset
-- the matching GitHub release also includes `x64.zip` and `arm64.zip` macOS desktop assets
+- a GitHub release in `pingdotgg/t3code` with an `x86_64` AppImage asset and an `arm64.zip` macOS desktop asset
 - a matching npm package version `t3@<version>`
 
 When a new version is found, the updater:
@@ -103,7 +102,6 @@ Pull requests and pushes are validated separately by CI on:
 
 - `ubuntu-latest` for `x86_64-linux`
 - `macos-15` for `aarch64-darwin`
-- `macos-15-intel` for `x86_64-darwin`
 
 Merged updates are released automatically on `main` by tagging the repository with `v<version>` and publishing a matching GitHub release.
 
@@ -125,10 +123,10 @@ The updater falls back to `GITHUB_TOKEN` if the secret is absent, but in that mo
 
 ## Limitations
 
-- Desktop support is currently `x86_64-linux`, `x86_64-darwin`, and `aarch64-darwin`.
+- Desktop support is currently `x86_64-linux` and `aarch64-darwin`.
 - The desktop package is built from upstream binary artifacts.
 - The CLI package is optional and follows upstream npm publication.
-- GitHub Actions is configured to build the flake on `x86_64-linux`, `x86_64-darwin`, and `aarch64-darwin`.
+- GitHub Actions is configured to build the flake on `x86_64-linux` and `aarch64-darwin`.
 
 ## Development
 

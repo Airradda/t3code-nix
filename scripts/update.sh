@@ -87,7 +87,7 @@ release_assets_ready() {
   local release_json="$1"
   local asset digest
 
-  for suffix in '-x86_64.AppImage' '-x64.zip' '-arm64.zip'; do
+  for suffix in '-x86_64.AppImage' '-arm64.zip'; do
     asset="$(printf '%s' "$release_json" | asset_from_json "$suffix")"
     [ -n "$asset" ] || return 1
 
@@ -150,12 +150,10 @@ write_upstream_cli_package_files() {
 update_desktop_package() {
   local version="$1"
   local linux_hash="$2"
-  local darwin_x64_hash="$3"
-  local darwin_arm64_hash="$4"
+  local darwin_arm64_hash="$3"
 
   sed -i "s|version = \".*\";|version = \"${version}\";|" package.nix
   sed -i "s|linuxHash = \".*\";|linuxHash = \"${linux_hash}\";|" package.nix
-  sed -i "s|darwinX64Hash = \".*\";|darwinX64Hash = \"${darwin_x64_hash}\";|" package.nix
   sed -i "s|darwinArm64Hash = \".*\";|darwinArm64Hash = \"${darwin_arm64_hash}\";|" package.nix
 }
 
@@ -170,9 +168,7 @@ update_cli_package() {
 validate() {
   log "validating flake"
   nix flake check
-  nix eval .#packages.x86_64-darwin.t3code.drvPath >/dev/null
   nix eval .#packages.aarch64-darwin.t3code.drvPath >/dev/null
-  nix eval .#packages.x86_64-darwin.t3code-cli.drvPath >/dev/null
   nix eval .#packages.aarch64-darwin.t3code-cli.drvPath >/dev/null
   nix build .#t3code
   test -x ./result/bin/t3code
@@ -224,9 +220,9 @@ main() {
   require_tool npm
   require_tool tar
 
-  local release_json current latest linux_asset darwin_x64_asset darwin_arm64_asset
-  local linux_digest darwin_x64_digest darwin_arm64_digest
-  local linux_hash darwin_x64_hash darwin_arm64_hash cli_metadata cli_hash
+  local release_json current latest linux_asset darwin_arm64_asset
+  local linux_digest darwin_arm64_digest
+  local linux_hash darwin_arm64_hash cli_metadata cli_hash
   current="$(current_desktop_version)"
   release_json="$(latest_release_json)"
   latest="${target_version:-$(printf '%s' "$release_json" | release_version_from_json)}"
@@ -256,19 +252,12 @@ main() {
   linux_asset="$(printf '%s' "$release_json" | asset_from_json '-x86_64.AppImage')"
   [ -n "$linux_asset" ] || fail "failed to find an x86_64 AppImage asset for ${latest}"
 
-  darwin_x64_asset="$(printf '%s' "$release_json" | asset_from_json '-x64.zip')"
-  [ -n "$darwin_x64_asset" ] || fail "failed to find an x64 Darwin zip asset for ${latest}"
-
   darwin_arm64_asset="$(printf '%s' "$release_json" | asset_from_json '-arm64.zip')"
   [ -n "$darwin_arm64_asset" ] || fail "failed to find an arm64 Darwin zip asset for ${latest}"
 
   linux_digest="$(asset_field "$linux_asset" '.digest')"
   [ "$linux_digest" != "null" ] || fail "failed to read GitHub digest for Linux AppImage ${latest}"
   linux_hash="$(github_digest_to_sri "$linux_digest")"
-
-  darwin_x64_digest="$(asset_field "$darwin_x64_asset" '.digest')"
-  [ "$darwin_x64_digest" != "null" ] || fail "failed to read GitHub digest for Darwin x64 zip ${latest}"
-  darwin_x64_hash="$(github_digest_to_sri "$darwin_x64_digest")"
 
   darwin_arm64_digest="$(asset_field "$darwin_arm64_asset" '.digest')"
   [ "$darwin_arm64_digest" != "null" ] || fail "failed to read GitHub digest for Darwin arm64 zip ${latest}"
@@ -278,7 +267,7 @@ main() {
   cli_hash="$(printf '%s' "$cli_metadata" | jq -r '.dist.integrity')"
   [ "$cli_hash" != "null" ] || fail "failed to find npm dist.integrity for ${latest}"
 
-  update_desktop_package "$latest" "$linux_hash" "$darwin_x64_hash" "$darwin_arm64_hash"
+  update_desktop_package "$latest" "$linux_hash" "$darwin_arm64_hash"
   write_upstream_cli_package_files "$latest"
   update_cli_package "$latest" "$cli_hash"
   validate

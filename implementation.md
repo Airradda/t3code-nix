@@ -22,8 +22,6 @@ Verified on March 7, 2026:
 - Latest release: `v0.0.4`
 - Desktop Linux asset: `T3-Code-0.0.4-x86_64.AppImage`
 - Desktop Linux asset digest from GitHub API: `sha256:1e5910fee3cb5c78760ee6a6ae6869df5c90aa71136b043846eee4836326a55b`
-- Desktop macOS x64 zip asset: `T3-Code-0.0.4-x64.zip`
-- Desktop macOS x64 zip digest from GitHub API: `sha256:6a8c628b541403f44d9384366e429d01005c3ef41c1536614120b45451156e35`
 - Desktop macOS arm64 zip asset: `T3-Code-0.0.4-arm64.zip`
 - Desktop macOS arm64 zip digest from GitHub API: `sha256:e50b99a62d55ac4061099dd95d5d3c21add371f6342f7f7e98e6f06561cbd1c6`
 - Matching npm package exists: `t3@0.0.4`
@@ -107,7 +105,7 @@ Responsibilities:
 Responsibilities:
 
 - fetch the latest GitHub release JSON,
-- extract the `x86_64` AppImage, `x64.zip`, and `arm64.zip` desktop assets and digests,
+- extract the `x86_64` AppImage and `arm64.zip` desktop assets and digests,
 - convert the GitHub digest to SRI format for Nix,
 - verify a matching npm `t3` version exists,
 - refresh `npm/package.json` and `npm/package-lock.json`,
@@ -130,7 +128,7 @@ Responsibilities:
 Responsibilities:
 
 - run on pushes, pull requests, and manual dispatch,
-- build the flake on `x86_64-linux`, `x86_64-darwin`, and `aarch64-darwin`,
+- build the flake on `x86_64-linux` and `aarch64-darwin`,
 - verify the desktop launcher exists,
 - verify the CLI entrypoint runs.
 
@@ -149,7 +147,6 @@ The repository intentionally keeps the desktop package and CLI package on the sa
 That means the updater should only succeed when both are available for the target version:
 
 - GitHub release AppImage exists,
-- GitHub release macOS `x64.zip` exists,
 - GitHub release macOS `arm64.zip` exists,
 - npm `t3@<version>` exists.
 
@@ -170,9 +167,7 @@ Repository settings should be configured so that:
 Minimum local validation after an update:
 
 - `nix flake check`
-- `nix eval .#packages.x86_64-darwin.t3code.drvPath`
 - `nix eval .#packages.aarch64-darwin.t3code.drvPath`
-- `nix eval .#packages.x86_64-darwin.t3code-cli.drvPath`
 - `nix eval .#packages.aarch64-darwin.t3code-cli.drvPath`
 - `nix build .#t3code`
 - `test -x ./result/bin/t3code`
@@ -183,8 +178,8 @@ If GUI execution is practical in the environment, the desktop binary should also
 
 ## Known Constraints
 
-- Desktop packaging is currently implemented for `x86_64-linux`, `x86_64-darwin`, and `aarch64-darwin`.
+- Desktop packaging is currently implemented for `x86_64-linux` and `aarch64-darwin`.
 - There is no upstream Linux ARM desktop artifact in the releases, so `aarch64-linux` is intentionally unsupported.
 - The desktop package is built from upstream binary artifacts, so this is not a source build.
 - The CLI package depends on native npm modules such as `node-pty`, so validation should not be assumed across architectures without an actual build.
-- GitHub Actions should provide real build validation on `x86_64-linux`, `x86_64-darwin`, and `aarch64-darwin`.
+- GitHub Actions should provide real build validation on `x86_64-linux` and `aarch64-darwin`.

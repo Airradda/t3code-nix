@@ -5,21 +5,28 @@
 , fetchurl
 , makeWrapper
 , unzip
-, codexSupport ? true, codex
-, opencodeSupport ? false, opencode
-, cursorSupport ? false, cursor-cli
-, claudeSupport ? false, claude-code
-, githubSupport ? false, gh
-, gitlabSupport ? true, glab
-, azureSupport ? false, azure-cli
-, bitbucketSupport ? false, bitbucket-cli
+, codexSupport ? true
+, codex
+, opencodeSupport ? false
+, opencode
+, cursorSupport ? false
+, cursor-cli
+, claudeSupport ? false
+, claude-code
+, githubSupport ? false
+, gh
+, gitlabSupport ? true
+, glab
+, azureSupport ? false
+, azure-cli
+, bitbucketSupport ? false
+, bitbucket-cli
 }:
 
 let
   pname = "t3code";
   version = "0.0.33";
   linuxHash = "sha256-QVyGSPQ8PSLVcvJ/LFD9yMMQ6n/N6VN7kD4eLxyHdaE=";
-  darwinX64Hash = "sha256-nisNLeiGfFB2JfmpwvNTSJFlpe5TB/xa1Cj9uEcX3tI=";
   darwinArm64Hash = "sha256-swT6pUzboWnveUH3WmlCMpxAmMVFGUYBmDBHFJmzq7s=";
 
   commonMeta = {
@@ -32,7 +39,6 @@ let
     sourceProvenance = with lib.sourceTypes; [ binaryNativeCode ];
     platforms = [
       "x86_64-linux"
-      "x86_64-darwin"
       "aarch64-darwin"
     ];
   };
@@ -96,16 +102,8 @@ let
 
   darwinAppName = "T3 Code (Alpha).app";
   darwinExecutable = "T3 Code (Alpha)";
-  darwinAsset =
-    if stdenv.hostPlatform.isAarch64 then
-      "T3-Code-${version}-arm64.zip"
-    else
-      "T3-Code-${version}-x64.zip";
-  darwinHash =
-    if stdenv.hostPlatform.isAarch64 then
-      darwinArm64Hash
-    else
-      darwinX64Hash;
+  darwinAsset = "T3-Code-${version}-arm64.zip";
+  darwinHash = darwinArm64Hash;
 
   darwinPackage = stdenvNoCC.mkDerivation {
     inherit pname version;
@@ -154,7 +152,7 @@ let
 in
 if stdenv.hostPlatform.isLinux && stdenv.hostPlatform.isx86_64 then
   linuxPackage
-else if stdenv.hostPlatform.isDarwin then
+else if stdenv.hostPlatform.isDarwin && stdenv.hostPlatform.isAarch64 then
   darwinPackage
 else
-  throw "t3code desktop is only packaged for x86_64-linux, x86_64-darwin, and aarch64-darwin"
+  throw "t3code desktop is only packaged for x86_64-linux and aarch64-darwin"

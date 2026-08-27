@@ -216,6 +216,7 @@ main() {
   require_tool base64
   require_tool curl
   require_tool jq
+  require_tool jj
   require_tool nix
   require_tool npm
   require_tool tar
@@ -270,6 +271,7 @@ main() {
   update_desktop_package "$latest" "$linux_hash" "$darwin_arm64_hash"
   write_upstream_cli_package_files "$latest"
   update_cli_package "$latest" "$cli_hash"
+  jj describe -m "chore: update T3 Code to version ${latest}"
   validate
 
   log "updated desktop and CLI packages to ${latest}"

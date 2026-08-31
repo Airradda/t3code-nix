@@ -9,7 +9,7 @@
     "t3": "./dist/bin.mjs"
   },
   "type": "module",
-  "version": "0.0.36",
+  "version": "0.0.37",
   "engines": {
     "node": "^22.16 || ^23.11 || >=24.10"
   },
@@ -60,13 +60,15 @@
     "@effect/sql-sqlite-bun": "4.0.0-beta.103",
     "@effect/vitest": "4.0.0-beta.103",
     "@effect/vitest>vitest": "-",
-    "@expo/metro-config": "56.0.14",
+    "@expo/dom-webview": "57.0.1",
+    "@expo/metro-config": "57.0.12",
+    "expo-constants": "57.0.16",
     "@pierre/diffs>@shikijs/transformers": "^4.2.0",
     "@types/node": "24.12.4",
     "effect": "4.0.0-beta.103",
-    "expo-modules-jsi": "56.0.10",
-    "expo-sharing>@expo/config-plugins": "56.0.9",
-    "expo-sharing>@expo/config-types": "56.0.6",
+    "expo-router": "57.0.17",
+    "expo-sharing>@expo/config-plugins": "57.0.9",
+    "expo-sharing>@expo/config-types": "57.0.2",
     "vite": "npm:@voidzero-dev/vite-plus-core@0.2.2",
     "yaml": "^2.9.0"
   }

@@ -35,12 +35,12 @@ let
 in
 buildNpmPackage rec {
   pname = "t3-cli";
-  version = "0.0.38";
+  version = "0.0.39";
   nodejs = nodejs_22;
 
   src = fetchurl {
     url = "https://registry.npmjs.org/t3/-/t3-${version}.tgz";
-    hash = "sha512-lGuIA56nrE3ofnm6wwLWOGgGIX79SeFmX62hPw9AMXSt0k19p+Tdj3/BOC7qkhbKTV4RGucLw033ksXRY3baqw==";
+    hash = "sha512-OvxnRhfy+GMmf4fUkLcjom5/jklqaAwOy3m/gSSbYZa7LyZWpjqOItbvJGA5SVzFwqJWly+mIV/185j+rxWcGw==";
   };
 
   sourceRoot = "package";
@@ -65,6 +65,8 @@ buildNpmPackage rec {
   };
 
   npmConfigHook = importNpmLock.npmConfigHook;
+  # The published lockfile mixes Effect beta packages with an rc peer.
+  npmFlags = [ "--legacy-peer-deps" ];
   nativeBuildInputs = [ makeWrapper ];
   dontNpmBuild = true;
 

@@ -1,6 +1,8 @@
 { lib
+, autoPatchelfHook
 , buildNpmPackage
 , fetchurl
+, gcc-unwrapped
 , importNpmLock
 , makeWrapper
 , nodejs_22
@@ -64,10 +66,15 @@ buildNpmPackage rec {
     };
   };
 
+  buildInputs = [ gcc-unwrapped ];
+
   npmConfigHook = importNpmLock.npmConfigHook;
   # The published lockfile mixes Effect beta packages with an rc peer.
   npmFlags = [ "--legacy-peer-deps" ];
-  nativeBuildInputs = [ makeWrapper ];
+  nativeBuildInputs = [
+    autoPatchelfHook
+    makeWrapper
+  ];
   dontNpmBuild = true;
 
   postPatch = ''

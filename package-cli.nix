@@ -37,12 +37,12 @@ let
 in
 buildNpmPackage rec {
   pname = "t3-cli";
-  version = "0.0.40";
+  version = "0.0.42";
   nodejs = nodejs_22;
 
   src = fetchurl {
     url = "https://registry.npmjs.org/t3/-/t3-${version}.tgz";
-    hash = "sha512-lvyH1fexahy7lVXNNWP9FUE/IRlYFKEt5DksoscftVY0VBDQ3LBVrKbyYd5iiHWXr1Qun3Fcbf+kXsIP+75wjg==";
+    hash = "sha512-B/BiAR9qwG+smhUj7b+R8V6rAsmYMyj0Sz50/KbBMmAy2DhFJdj4PpcAVNWabFHyyEksVtAxYuWjxEa01zg/sw==";
   };
 
   sourceRoot = "package";

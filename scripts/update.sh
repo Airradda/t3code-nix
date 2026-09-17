@@ -59,8 +59,8 @@ release_version_from_json() {
 }
 
 asset_from_json() {
-  local suffix="$1"
-  jq -r --arg suffix "$suffix" '.assets[] | select(.name | endswith($suffix)) | @base64' | head -n 1
+  local name="$1"
+  jq -r --arg name "$name" 'first(.assets[] | select(.name == $name)) // empty | @base64'
 }
 
 asset_field() {
@@ -85,10 +85,13 @@ npm_metadata() {
 
 release_assets_ready() {
   local release_json="$1"
-  local asset digest
+  local version asset_name asset digest
+  version="$(printf '%s' "$release_json" | release_version_from_json)"
 
-  for suffix in '-x86_64.AppImage' '-arm64.zip'; do
-    asset="$(printf '%s' "$release_json" | asset_from_json "$suffix")"
+  for asset_name in \
+    "T3-Code-${version}-x86_64.AppImage" \
+    "T3-Code-${version}-arm64.zip"; do
+    asset="$(printf '%s' "$release_json" | asset_from_json "$asset_name")"
     [ -n "$asset" ] || return 1
 
     digest="$(asset_field "$asset" '.digest')"
@@ -250,10 +253,11 @@ main() {
     exit 1
   fi
 
-  linux_asset="$(printf '%s' "$release_json" | asset_from_json '-x86_64.AppImage')"
+  log "resolving release assets for ${latest}"
+  linux_asset="$(printf '%s' "$release_json" | asset_from_json "T3-Code-${latest}-x86_64.AppImage")"
   [ -n "$linux_asset" ] || fail "failed to find an x86_64 AppImage asset for ${latest}"
 
-  darwin_arm64_asset="$(printf '%s' "$release_json" | asset_from_json '-arm64.zip')"
+  darwin_arm64_asset="$(printf '%s' "$release_json" | asset_from_json "T3-Code-${latest}-arm64.zip")"
   [ -n "$darwin_arm64_asset" ] || fail "failed to find an arm64 Darwin zip asset for ${latest}"
 
   linux_digest="$(asset_field "$linux_asset" '.digest')"
@@ -264,10 +268,12 @@ main() {
   [ "$darwin_arm64_digest" != "null" ] || fail "failed to read GitHub digest for Darwin arm64 zip ${latest}"
   darwin_arm64_hash="$(github_digest_to_sri "$darwin_arm64_digest")"
 
+  log "reading npm metadata for t3@${latest}"
   cli_metadata="$(npm_metadata "$latest")"
   cli_hash="$(printf '%s' "$cli_metadata" | jq -r '.dist.integrity')"
   [ "$cli_hash" != "null" ] || fail "failed to find npm dist.integrity for ${latest}"
 
+  log "updating package files to ${latest}"
   update_desktop_package "$latest" "$linux_hash" "$darwin_arm64_hash"
   write_upstream_cli_package_files "$latest"
   update_cli_package "$latest" "$cli_hash"

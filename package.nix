@@ -25,9 +25,9 @@
 
 let
   pname = "t3code";
-  version = "0.0.42";
-  linuxHash = "sha256-jcH8zavC7TpZo5RMx3LvEZMbk1FAHAlj7TBdX5bjzfQ=";
-  darwinArm64Hash = "sha256-BmOznpeQ8Hayp0uUReEXziu26CTQYZxXjoCLS6crRjc=";
+  version = "0.0.44";
+  linuxHash = "sha256-urbPKfEwFa9+lm6VPo7Vqa17bmPLhkz0Hj4IFeqFchk=";
+  darwinArm64Hash = "sha256-SAtc2OvO5PT0PhCNMJ2R/nyHmTHYquime3HP2KB84N8=";
 
   commonMeta = {
     description = "T3 Code desktop app packaged from upstream release artifacts";

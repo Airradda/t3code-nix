@@ -4,7 +4,7 @@ Nix flake packaging for the upstream [T3 Code](https://github.com/pingdotgg/t3co
 
 ## Why this exists
 
-Upstream currently ships a Linux AppImage, macOS desktop archives, and the CLI through npm. This repository packages those artifacts directly in Nix so users can install pinned versions without ad hoc runtime downloads.
+Upstream currently ships Linux AppImage and Debian packages, macOS desktop archives, and the CLI through npm. This repository packages those artifacts directly in Nix so users can install pinned versions without ad hoc runtime downloads.
 
 The desktop application is the primary output of this flake.
 
@@ -14,7 +14,7 @@ The repository structure and update automation approach are inspired by [sadjow/
 
 ## Packages
 
-- `t3code` / `t3code-desktop`: desktop application packaged from the upstream Linux AppImage or macOS zip archive, depending on platform
+- `t3code` / `t3code-desktop`: desktop application packaged from the upstream Linux Debian package or macOS zip archive, depending on platform
 - `t3code-cli` / `t3`: optional CLI packaged from the upstream npm tarball
 - `default`: desktop application
 
@@ -68,7 +68,8 @@ Use as a flake input:
 
 Desktop package:
 
-- `x86_64-linux`: fetches the upstream AppImage from GitHub releases and wraps it with `appimageTools.wrapType2`
+- `x86_64-linux`: fetches the upstream `amd64.deb`, patches its ELF files with `autoPatchelfHook`, and installs the application under `$out/lib/t3code`
+- `aarch64-linux`: fetches the matching upstream `arm64.deb` and uses the same Debian-based packaging flow
 - `aarch64-darwin`: fetches the matching upstream zip archive and installs the `.app` bundle into the Nix store with a `t3code` launcher
 
 CLI package:
@@ -83,12 +84,12 @@ The GitHub Actions update workflow checks upstream releases every six hours.
 
 An update is valid only when all of these exist for the same version:
 
-- a GitHub release in `pingdotgg/t3code` with an `x86_64` AppImage asset and an `arm64.zip` macOS desktop asset
+- a GitHub release in `pingdotgg/t3code` with `amd64.deb`, `arm64.deb`, and `arm64.zip` desktop assets
 - a matching npm package version `t3@<version>`
 
 When a new version is found, the updater:
 
-- refreshes `package.nix` for the Linux AppImage and macOS desktop archives
+- refreshes `package.nix` for the Linux Debian packages and macOS desktop archives
 - refreshes `package-cli.nix` for the CLI package
 - regenerates `npm/package.json`
 - regenerates `npm/package-lock.json`
@@ -101,6 +102,7 @@ When a new version is found, the updater:
 Pull requests and pushes are validated separately by CI on:
 
 - `ubuntu-latest` for `x86_64-linux`
+- `ubuntu-24.04-arm` for `aarch64-linux`
 - `macos-15` for `aarch64-darwin`
 
 Merged updates are released automatically on `main` by tagging the repository with `v<version>` and publishing a matching GitHub release.
@@ -123,10 +125,10 @@ The updater falls back to `GITHUB_TOKEN` if the secret is absent, but in that mo
 
 ## Limitations
 
-- Desktop support is currently `x86_64-linux` and `aarch64-darwin`.
+- Desktop support is currently `x86_64-linux`, `aarch64-linux`, and `aarch64-darwin`.
 - The desktop package is built from upstream binary artifacts.
 - The CLI package is optional and follows upstream npm publication.
-- GitHub Actions is configured to build the flake on `x86_64-linux` and `aarch64-darwin`.
+- GitHub Actions is configured to build the flake on `x86_64-linux`, `aarch64-linux`, and `aarch64-darwin`.
 
 ## Development
 

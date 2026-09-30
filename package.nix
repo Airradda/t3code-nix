@@ -1,9 +1,46 @@
 { lib
 , stdenv
 , stdenvNoCC
-, appimageTools
+, alsa-lib
+, at-spi2-atk
+, at-spi2-core
+, autoPatchelfHook
+, cairo
+, cups
+, dbus
+, dpkg
+, expat
 , fetchurl
+, fontconfig
+, freetype
+, gdk-pixbuf
+, glib
+, gtk3
+, libX11
+, libXcomposite
+, libXdamage
+, libXext
+, libXfixes
+, libXrandr
+, libXrender
+, libXScrnSaver
+, libXtst
+, libdrm
+, libgbm
+, libnotify
+, libsecret
+, libuuid
+, libxcb
+, libxkbcommon
+, libxshmfence
 , makeWrapper
+, mesa
+, nspr
+, nss
+, pango
+, systemd
+, wayland
+, xdg-utils
 , unzip
 , codexSupport ? true
 , codex
@@ -26,7 +63,8 @@
 let
   pname = "t3code";
   version = "0.0.44";
-  linuxHash = "sha256-urbPKfEwFa9+lm6VPo7Vqa17bmPLhkz0Hj4IFeqFchk=";
+  linuxAmd64Hash = "sha256-qsVYy7X2ak7TwIFHzcfJkYwGIDQE/BfdkOAR63zgFFM=";
+  linuxArm64Hash = "sha256-0BEroeFBbnj5KJikIE/2NZazfKHYvy6++tgG+ojyrM4=";
   darwinArm64Hash = "sha256-SAtc2OvO5PT0PhCNMJ2R/nyHmTHYquime3HP2KB84N8=";
 
   commonMeta = {
@@ -39,62 +77,99 @@ let
     sourceProvenance = with lib.sourceTypes; [ binaryNativeCode ];
     platforms = [
       "x86_64-linux"
+      "aarch64-linux"
       "aarch64-darwin"
     ];
   };
 
   linuxPackage =
     let
+      linuxAsset = if stdenv.hostPlatform.isx86_64 then "amd64" else "arm64";
+      linuxHash = if stdenv.hostPlatform.isx86_64 then linuxAmd64Hash else linuxArm64Hash;
       src = fetchurl {
-        url = "https://github.com/pingdotgg/t3code/releases/download/v${version}/T3-Code-${version}-x86_64.AppImage";
+        url = "https://github.com/pingdotgg/t3code/releases/download/v${version}/T3-Code-${version}-${linuxAsset}.deb";
         hash = linuxHash;
       };
-
-      appimageContents = appimageTools.extractType2 {
-        inherit pname version src;
-      };
     in
-    appimageTools.wrapType2 {
+    stdenv.mkDerivation {
       inherit pname version src;
-      nativeBuildInputs = [ makeWrapper ];
+      nativeBuildInputs = [
+        autoPatchelfHook
+        dpkg
+        makeWrapper
+      ];
 
-      extraInstallCommands = ''
-        mkdir -p "$out/share"
+      buildInputs = [
+        alsa-lib
+        at-spi2-atk
+        at-spi2-core
+        cairo
+        cups
+        dbus
+        expat
+        fontconfig
+        freetype
+        gdk-pixbuf
+        glib
+        gtk3
+        libX11
+        libXcomposite
+        libXdamage
+        libXext
+        libXfixes
+        libXrandr
+        libXrender
+        libXScrnSaver
+        libXtst
+        libdrm
+        libgbm
+        libnotify
+        libsecret
+        libuuid
+        libxcb
+        libxkbcommon
+        libxshmfence
+        mesa
+        nspr
+        nss
+        pango
+        systemd
+        wayland
+      ];
 
-        if [ -d ${appimageContents}/usr/share ]; then
-          cp -r ${appimageContents}/usr/share/* "$out/share/"
-        fi
+      dontConfigure = true;
+      dontBuild = true;
+      dontUnpack = true;
+      autoPatchelfIgnoreMissingDeps = [
+        "libc.musl-x86_64.so.1"
+        "libc.musl-aarch64.so.1"
+      ];
 
-        desktop_file="$(find "$out/share" -type f -name '*.desktop' | head -n 1 || true)"
-        if [ -z "$desktop_file" ]; then
-          desktop_source="$(find ${appimageContents} -maxdepth 2 -type f -name '*.desktop' | head -n 1 || true)"
-          if [ -n "$desktop_source" ]; then
-            desktop_file="$out/share/applications/$(basename "$desktop_source")"
-            install -Dm444 "$desktop_source" "$desktop_file"
-          fi
-        fi
+      installPhase = ''
+        runHook preInstall
 
-        if [ -n "$desktop_file" ]; then
-          desktop_basename="$(basename "$desktop_file")"
+        unpacked="$TMPDIR/t3code"
+        dpkg-deb -x "$src" "$unpacked"
 
-          sed -i \
-            -e 's|Exec=AppRun|Exec=${pname}|g' \
-            -e 's|Exec=AppRun %U|Exec=${pname} %U|g' \
-            -e 's|TryExec=AppRun|TryExec=${pname}|g' \
-            -e 's|^StartupWMClass=.*$|StartupWMClass=t3-code-desktop|g' \
-            "$desktop_file"
+        mkdir -p "$out/bin" "$out/lib/t3code" "$out/share"
+        cp -r "$unpacked/opt/T3 Code (Alpha)/." "$out/lib/t3code/"
+        cp -r "$unpacked/usr/share/." "$out/share/"
 
-          wrapProgram "$out/bin/${pname}" \
-            --set CHROME_DESKTOP "$desktop_basename" \
-            --prefix XDG_DATA_DIRS : "$out/share" \
-            ${lib.optionalString codexSupport ''
-              --prefix PATH : "${lib.makeBinPath [ codex ]}"
-            ''}
-        fi
+        substituteInPlace "$out/share/applications/t3code.desktop" \
+          --replace-fail 'Exec="/opt/T3 Code (Alpha)/t3code" %U' 'Exec=t3code %U'
 
-        if [ -f ${appimageContents}/.DirIcon ]; then
-          install -Dm444 ${appimageContents}/.DirIcon "$out/share/pixmaps/${pname}.png"
-        fi
+        makeWrapper \
+          "$out/lib/t3code/t3code" \
+          "$out/bin/${pname}" \
+          --set CHROME_DESKTOP t3code.desktop \
+          --set T3CODE_DISABLE_AUTO_UPDATE true \
+          --prefix PATH : "${lib.makeBinPath [ xdg-utils ]}" \
+          --prefix XDG_DATA_DIRS : "$out/share" \
+          ${lib.optionalString codexSupport ''
+            --prefix PATH : "${lib.makeBinPath [ codex ]}"
+          ''}
+
+        runHook postInstall
       '';
 
       meta = commonMeta;
@@ -150,9 +225,9 @@ let
     meta = commonMeta;
   };
 in
-if stdenv.hostPlatform.isLinux && stdenv.hostPlatform.isx86_64 then
+if stdenv.hostPlatform.isLinux && (stdenv.hostPlatform.isx86_64 || stdenv.hostPlatform.isAarch64) then
   linuxPackage
 else if stdenv.hostPlatform.isDarwin && stdenv.hostPlatform.isAarch64 then
   darwinPackage
 else
-  throw "t3code desktop is only packaged for x86_64-linux and aarch64-darwin"
+  throw "t3code desktop is only packaged for x86_64-linux, aarch64-linux, and aarch64-darwin"

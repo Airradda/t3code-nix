@@ -6,6 +6,7 @@
 , importNpmLock
 , makeWrapper
 , nodejs_22
+, stdenv
 , codexSupport ? true, codex
 , opencodeSupport ? false, opencode
 , cursorSupport ? false, cursor-cli
@@ -66,15 +67,13 @@ buildNpmPackage rec {
     };
   };
 
-  buildInputs = [ gcc-unwrapped ];
+  buildInputs = lib.optional stdenv.hostPlatform.isLinux gcc-unwrapped;
 
   npmConfigHook = importNpmLock.npmConfigHook;
   # The published lockfile mixes Effect beta packages with an rc peer.
   npmFlags = [ "--legacy-peer-deps" ];
-  nativeBuildInputs = [
-    autoPatchelfHook
-    makeWrapper
-  ];
+  nativeBuildInputs = [ makeWrapper ]
+    ++ lib.optional stdenv.hostPlatform.isLinux autoPatchelfHook;
   dontNpmBuild = true;
 
   postPatch = ''

@@ -27,6 +27,7 @@
 , libXtst
 , libdrm
 , libgbm
+, libglvnd
 , libnotify
 , libsecret
 , libuuid
@@ -123,6 +124,7 @@ let
         libXtst
         libdrm
         libgbm
+        libglvnd
         libnotify
         libsecret
         libuuid
@@ -164,6 +166,7 @@ let
           --set CHROME_DESKTOP t3code.desktop \
           --set T3CODE_DISABLE_AUTO_UPDATE true \
           --prefix PATH : "${lib.makeBinPath [ xdg-utils ]}" \
+          --prefix LD_LIBRARY_PATH : "${lib.makeLibraryPath [ libglvnd ]}" \
           --prefix XDG_DATA_DIRS : "$out/share" \
           ${lib.optionalString codexSupport ''
             --prefix PATH : "${lib.makeBinPath [ codex ]}"

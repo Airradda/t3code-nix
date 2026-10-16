@@ -64,6 +64,7 @@
 let
   pname = "t3code";
   version = "0.1.0";
+  appName = "T3 Code (Beta)";
   linuxAmd64Hash = "sha256-NZCmPC61vuIbcLIppFhjIu2CFArs2Mf+sJqoAXj4Y5w=";
   linuxArm64Hash = "sha256-N46KyUfil1C1ZY39EF1Lk3Y5d0KxwHr+oCBK8G1E/iI=";
   darwinArm64Hash = "sha256-DSGwdtPRsmbKS2+0MuP6eZgPj8fqn4hTmpNM12YqX6g=";
@@ -154,11 +155,11 @@ let
         dpkg-deb -x "$src" "$unpacked"
 
         mkdir -p "$out/bin" "$out/lib/t3code" "$out/share"
-        cp -r "$unpacked/opt/T3 Code (Alpha)/." "$out/lib/t3code/"
+        cp -r "$unpacked/opt/${appName}/." "$out/lib/t3code/"
         cp -r "$unpacked/usr/share/." "$out/share/"
 
         substituteInPlace "$out/share/applications/t3code.desktop" \
-          --replace-fail 'Exec="/opt/T3 Code (Alpha)/t3code" %U' 'Exec=t3code %U'
+          --replace-fail 'Exec="/opt/${appName}/t3code" %U' 'Exec=t3code %U'
 
         makeWrapper \
           "$out/lib/t3code/t3code" \
@@ -178,8 +179,8 @@ let
       meta = commonMeta;
     };
 
-  darwinAppName = "T3 Code (Alpha).app";
-  darwinExecutable = "T3 Code (Alpha)";
+  darwinAppName = "${appName}.app";
+  darwinExecutable = appName;
   darwinAsset = "T3-Code-${version}-arm64.zip";
   darwinHash = darwinArm64Hash;
 

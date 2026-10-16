@@ -166,12 +166,13 @@ let
           "$out/bin/${pname}" \
           --set CHROME_DESKTOP t3code.desktop \
           --set T3CODE_DISABLE_AUTO_UPDATE true \
-          --prefix PATH : "${lib.makeBinPath [ xdg-utils ]}" \
+          --prefix PATH : "${lib.makeBinPath (
+            [ xdg-utils ]
+            ++ lib.optional codexSupport codex
+            ++ lib.optional claudeSupport claude-code
+          )}" \
           --prefix LD_LIBRARY_PATH : "${lib.makeLibraryPath [ libglvnd ]}" \
-          --prefix XDG_DATA_DIRS : "$out/share" \
-          ${lib.optionalString codexSupport ''
-            --prefix PATH : "${lib.makeBinPath [ codex ]}"
-          ''}
+          --prefix XDG_DATA_DIRS : "$out/share"
 
         runHook postInstall
       '';

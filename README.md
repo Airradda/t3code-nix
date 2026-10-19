@@ -64,6 +64,49 @@ Use as a flake input:
 }
 ```
 
+### Enable Claude Code
+
+Claude Code is unfree in nixpkgs. The packages under `packages.${system}` are evaluated with this flake's nixpkgs package set, so a consumer's `nixpkgs.config.allowUnfree` setting does not apply to them.
+
+The recommended approach is to use the overlay. `callPackage` then takes `claude-code` from the same package set whose unfree policy you configured:
+
+```nix
+{
+  outputs = { self, nixpkgs, t3code-nix, ... }:
+    let
+      system = "x86_64-linux";
+      pkgs = import nixpkgs {
+        inherit system;
+        config.allowUnfreePredicate = pkg:
+          nixpkgs.lib.getName pkg == "claude-code";
+        overlays = [ t3code-nix.overlays.default ];
+      };
+    in
+    {
+      packages.${system}.default = pkgs.t3code.override {
+        claudeSupport = true;
+      };
+    };
+}
+```
+
+If you use a package from the flake's `packages` output, pass the Claude Code derivation from your configured package set explicitly:
+
+```nix
+inputs.t3code-nix.packages.${pkgs.system}.t3code-desktop.override {
+  claudeSupport = true;
+  claude-code = pkgs.claude-code;
+}
+```
+
+You can also build the package with `callPackage` directly. It supplies dependencies, including `claude-code`, from your configured `pkgs`:
+
+```nix
+pkgs.callPackage (inputs.t3code-nix.outPath + "/package.nix") {
+  claudeSupport = true;
+}
+```
+
 ## What gets installed
 
 Desktop package:

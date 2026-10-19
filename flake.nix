@@ -54,6 +54,21 @@
           checks = {
             t3code-build = pkgs.t3code;
             t3-cli-build = pkgs.t3code-cli;
+            t3code-claude-code-evaluation =
+              let
+                consumerPkgs = import nixpkgs {
+                  inherit system;
+                  config.allowUnfreePredicate = pkg:
+                    nixpkgs.lib.getName pkg == "claude-code";
+                };
+                t3codeWithClaude = self.packages.${system}.t3code.override {
+                  claudeSupport = true;
+                  claude-code = consumerPkgs.claude-code;
+                };
+              in
+              pkgs.runCommand "t3code-claude-code-evaluation" { } ''
+                echo "${t3codeWithClaude.drvPath}" > "$out"
+              '';
             t3-cli-help = pkgs.runCommand "t3-cli-help" { } ''
               ${pkgs.t3code-cli}/bin/t3 --help > "$out"
             '';

@@ -1,7 +1,7 @@
 {
   "name": "t3",
-  "version": "0.1.0",
-  "description": "T3 Code CLI. Installs the self-contained executable for this platform.",
+  "version": "0.1.1",
+  "description": "T3 Code CLI. Downloads the self-contained executable for this platform from the GitHub Release.",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -9,17 +9,13 @@
     "directory": "apps/server"
   },
   "bin": {
-    "t3": "./bin/t3.js"
+    "t3": "./bin/t3.mjs"
   },
   "files": [
     "bin",
     "dist"
   ],
-  "optionalDependencies": {
-    "@t3code/t3-darwin-arm64": "0.1.0",
-    "@t3code/t3-linux-arm64": "0.1.0",
-    "@t3code/t3-linux-x64": "0.1.0",
-    "@t3code/t3-win32-arm64": "0.1.0",
-    "@t3code/t3-win32-x64": "0.1.0"
+  "engines": {
+    "node": ">=20.11"
   }
 }

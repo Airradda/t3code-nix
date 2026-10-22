@@ -166,6 +166,7 @@ let
           "$out/bin/${pname}" \
           --set CHROME_DESKTOP t3code.desktop \
           --set T3CODE_DISABLE_AUTO_UPDATE true \
+          --set T3CODE_TELEMETRY_ENABLED false \
           --prefix PATH : "${lib.makeBinPath (
             [ xdg-utils ]
             ++ lib.optional codexSupport codex
@@ -213,6 +214,7 @@ let
         "$out/bin/${pname}" \
         ${lib.concatStringsSep " \\
         " (lib.filter (s: s != "") [
+          ''--set T3CODE_TELEMETRY_ENABLED false''
           (lib.optionalString codexSupport ''--prefix PATH : "${lib.makeBinPath [ codex ]}"'')
           (lib.optionalString opencodeSupport ''--prefix PATH : "${lib.makeBinPath [ opencode ]}"'')
           (lib.optionalString cursorSupport ''--prefix PATH : "${lib.makeBinPath [ cursor-cli ]}"'')

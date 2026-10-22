@@ -67,7 +67,7 @@ Responsibilities:
 - unpack the Linux Debian package with `dpkg-deb -x`,
 - patch the Linux ELF files with `autoPatchelfHook` and explicit runtime libraries,
 - install the Debian application tree under `$out/lib/t3code`, desktop entry, and icons,
-- expose `$out/bin/t3code` through a wrapper with `T3CODE_DISABLE_AUTO_UPDATE=true`,
+- expose `$out/bin/t3code` through a wrapper with `T3CODE_DISABLE_AUTO_UPDATE=true` and `T3CODE_TELEMETRY_ENABLED=false`,
 - install the macOS `.app` bundle and a `t3code` launcher on Darwin,
 - expose correct package metadata.
 

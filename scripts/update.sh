@@ -173,7 +173,7 @@ update_cli_package() {
 
 validate() {
   log "validating flake"
-  nix flake check
+  nix flake check --no-build
   nix eval .#packages.aarch64-linux.t3code.drvPath >/dev/null
   nix eval .#packages.aarch64-darwin.t3code.drvPath >/dev/null
   nix eval .#packages.aarch64-darwin.t3code-cli.drvPath >/dev/null

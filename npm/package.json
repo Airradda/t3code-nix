@@ -1,6 +1,6 @@
 {
   "name": "t3",
-  "version": "0.1.3",
+  "version": "0.1.5",
   "description": "T3 Code CLI. Downloads the self-contained executable for this platform from the GitHub Release.",
   "license": "MIT",
   "repository": {
@@ -17,5 +17,8 @@
   ],
   "engines": {
     "node": ">=20.11"
+  },
+  "t3code": {
+    "databaseMigration": 72
   }
 }

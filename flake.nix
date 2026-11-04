@@ -67,7 +67,7 @@
                 };
               in
               pkgs.runCommand "t3code-claude-code-evaluation" { } ''
-                echo "${t3codeWithClaude.drvPath}" > "$out"
+                echo "${builtins.unsafeDiscardStringContext t3codeWithClaude.drvPath}" > "$out"
               '';
             t3-cli-help = pkgs.runCommand "t3-cli-help" { } ''
               ${pkgs.t3code-cli}/bin/t3 --help > "$out"

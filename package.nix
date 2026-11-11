@@ -63,11 +63,11 @@
 
 let
   pname = "t3code";
-  version = "0.1.8";
+  version = "0.1.9";
   appName = "T3 Code (Beta)";
-  linuxAmd64Hash = "sha256-ItrBFn1OTmij88NGG1PH1HLvcPICBzLHAAbrKXCDDl4=";
-  linuxArm64Hash = "sha256-UiprNrJ/54kvs8YQHUseZ2a03uS6Q9luJLtVNAh2eYM=";
-  darwinArm64Hash = "sha256-g5Kk9Zyi13LEQIcfw8/yn7Sv0TT8UhBkiocq0I7MITY=";
+  linuxAmd64Hash = "sha256-QYx4JfcxB7e1ujurrl47SFgB3CLZ3A1RivYy95BsvdE=";
+  linuxArm64Hash = "sha256-eVmXa01/xEQ8n7dwEod01OhvFNsBBEvjaQHkiJCPO7Q=";
+  darwinArm64Hash = "sha256-A+9CbmasWxZwAYhZbBOU9EhYa4q3zDeeHjIbKfLEWX4=";
 
   commonMeta = {
     description = "T3 Code desktop app packaged from upstream release artifacts";

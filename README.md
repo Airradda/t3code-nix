@@ -107,6 +107,16 @@ pkgs.callPackage (inputs.t3code-nix.outPath + "/package.nix") {
 }
 ```
 
+### Enable Grok
+
+`grokSupport = true` adds xAI's `grok` CLI (nixpkgs `grok-build`) to the launcher's `PATH`. `grok-build` is also unfree, so it follows the same rules as Claude Code above: allow `"grok-build"` in your unfree predicate and either use the overlay or pass `grok-build = pkgs.grok-build;` explicitly.
+
+```nix
+pkgs.t3code.override {
+  grokSupport = true;
+}
+```
+
 ## What gets installed
 
 Desktop package:

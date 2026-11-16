@@ -11,6 +11,7 @@
 , opencodeSupport ? false, opencode
 , cursorSupport ? false, cursor-cli
 , claudeSupport ? false, claude-code
+, grokSupport ? false, grok-build
 , githubSupport ? false, gh
 , gitlabSupport ? true, glab
 , azureSupport ? false, azure-cli
@@ -119,6 +120,7 @@ buildNpmPackage rec {
         (lib.optionalString opencodeSupport ''--prefix PATH : "${lib.makeBinPath [ opencode ]}"'')
         (lib.optionalString cursorSupport ''--prefix PATH : "${lib.makeBinPath [ cursor-cli ]}"'')
         (lib.optionalString claudeSupport ''--prefix PATH : "${lib.makeBinPath [ claude-code ]}"'')
+        (lib.optionalString grokSupport ''--prefix PATH : "${lib.makeBinPath [ grok-build ]}"'')
         (lib.optionalString githubSupport ''--prefix PATH : "${lib.makeBinPath [ gh ]}"'')
         (lib.optionalString gitlabSupport ''--prefix PATH : "${lib.makeBinPath [ glab ]}"'')
         (lib.optionalString azureSupport ''--prefix PATH : "${lib.makeBinPath [ azure-cli ]}"'')

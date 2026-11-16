@@ -51,6 +51,8 @@
 , cursor-cli
 , claudeSupport ? false
 , claude-code
+, grokSupport ? false
+, grok-build
 , githubSupport ? false
 , gh
 , gitlabSupport ? true
@@ -171,6 +173,7 @@ let
             [ xdg-utils ]
             ++ lib.optional codexSupport codex
             ++ lib.optional claudeSupport claude-code
+            ++ lib.optional grokSupport grok-build
           )}" \
           --prefix LD_LIBRARY_PATH : "${lib.makeLibraryPath [ libglvnd ]}" \
           --prefix XDG_DATA_DIRS : "$out/share"
@@ -219,6 +222,7 @@ let
           (lib.optionalString opencodeSupport ''--prefix PATH : "${lib.makeBinPath [ opencode ]}"'')
           (lib.optionalString cursorSupport ''--prefix PATH : "${lib.makeBinPath [ cursor-cli ]}"'')
           (lib.optionalString claudeSupport ''--prefix PATH : "${lib.makeBinPath [ claude-code ]}"'')
+          (lib.optionalString grokSupport ''--prefix PATH : "${lib.makeBinPath [ grok-build ]}"'')
           (lib.optionalString githubSupport ''--prefix PATH : "${lib.makeBinPath [ gh ]}"'')
           (lib.optionalString gitlabSupport ''--prefix PATH : "${lib.makeBinPath [ glab ]}"'')
           (lib.optionalString azureSupport ''--prefix PATH : "${lib.makeBinPath [ azure-cli ]}"'')
